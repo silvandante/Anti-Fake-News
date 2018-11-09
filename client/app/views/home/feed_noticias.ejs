@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Anti Fake news</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!--Bootsrap 4 CDN-->
+    
+      <!--Fontawesome CDN-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <style>
+
+    body {
+      padding-top: 54px;
+    }
+
+    @media (min-width: 992px) {
+      body {
+        padding-top: 56px;
+      }
+    }
+
+
+
+    </style>
+
+  </head>
+
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">ANTI Fake News</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="http://localhost/search_noticias"><span class="fa fa-search"></span> Pesquisar
+              </a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="http://localhost/logout"><span class="fa fa-sign-out-alt"></span> Sair</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Page Content -->
+    <div class="container">
+
+      <div class="row">
+
+        <!-- Blog Entries Column -->
+        <div class="col-md-8">
+
+        <h1 class="my-4">Dashboard
+          <small>Notícias</small>
+        </h1>
+
+        <div id="container_timeline">
+          
+        </div>
+          
+
+        </div>
+
+        <!-- Sidebar Widgets Column -->
+        <div class="col-md-4">
+          <!-- Categories Widget -->
+          <div class="card my-4">
+            <h5 class="card-header">Meu Jornal</h5>
+            <div class="card-body ">
+              <div class="row" id="profile">
+               
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+
+    <!-- Footer -->
+    <footer class="py-5 bg-dark">
+      <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; Anny Walker 2018</p>
+      </div>
+      <!-- /.container -->
+    </footer>
+
+    <script type="text/javascript">
+      
+      var news = JSON.parse('<%- (news) %>');
+      console.log(news);
+      var user = '<%= (user) %>';
+
+      var i = 0;
+      $(document).ready(function(){
+
+        function doRequest(i, xhr, link) {
+            return new Promise( function(resolve, reject) {
+              var formData_ = new FormData();
+              formData_.append("link", link);
+              xhr.open('POST', 'http://localhost:8080/api_get_noticia');
+             
+              xhr.onreadystatechange=function(){
+                  if (xhr.readyState == 4 && xhr.status == 200)
+                      resolve({"responseText" : xhr.responseText, "i" : i});
+              }
+            
+              xhr.send(formData_);
+            });
+        }
+
+        function doRequestInsertFakeNewsInto( xhr, link, user) {
+            return new Promise( function(resolve, reject) {
+              var formData_ = new FormData();
+              formData_.append("link", link);
+              formData_.append("user", user);
+              xhr.open('POST', 'http://localhost:8080/insert_fake_news_into');
+              xhr.onreadystatechange=function(){
+                  if (xhr.readyState == 4 && xhr.status == 200){
+                      resolve({"responseText" : xhr.responseText});
+                    }
+              }
+            
+              xhr.send(formData_);
+            });
+        }
+
+        function doRequestInsertTrueNewsInto( xhr, link, user) {
+            return new Promise( function(resolve, reject) {
+              var formData_ = new FormData();
+              formData_.append("link", link);
+              formData_.append("user", user);
+              xhr.open('POST', 'http://localhost:8080/insert_true_news_into');
+              xhr.onreadystatechange=function(){
+                  if (xhr.readyState == 4 && xhr.status == 200){
+                      resolve({"responseText" : xhr.responseText});
+                    }
+              }
+            
+              xhr.send(formData_);
+            });
+        }
+
+      var clicked_fake_news = false;
+
+      function carrega_noticias() {
+
+        for (i  ; i < news.length ; i++){
+          console.log(news[i].link);
+          var noticia;
+          doRequest(i, new XMLHttpRequest(), news[i].link).then(function (response){
+            
+            var fake_news;
+            var true_news;
+
+            var noticia = JSON.parse(response.responseText);
+
+            var cont_fake = 0;
+            var cont_true = 0;
+
+            if (noticia === null) {
+              fake_news = "0 Fake News";
+              true_news = "0 True News";
+            } else {
+              for (var j = 0 ; j < noticia.fake_news.length ; j ++) {
+                cont_fake++;
+              }
+              for (var j = 0 ; j < noticia.true_news.length ; j ++) {
+                cont_true++;
+              }
+
+
+              fake_news = cont_fake+" Fake News";
+              true_news = cont_true+" True News";
+            }
+
+            $('#container_timeline').append(
+              '<div class="card mb-4">'+
+                  '<div class="card-header"><a href="'+news[response.i].link+'"><h2>'+news[response.i].title+'</h2></a></div>'+
+
+                   '<div class="comentarios" id=""></div>'+
+                     '<div class="card-body">'+
+                          '<input type="text" class="form-control input_comentario" id="" placeholder="Adicionar comentário...">'+
+                          '<button class="btn btn-default btn_postagem" value="" type="button">Comentar</button>'+
+                      '</div>'+
+
+                  '<div class="card-body">'+
+                    '<button class="btn btn-danger btn_fake_news" value="'+news[response.i].link+'" id="'+news[response.i].link+'"  type="button">'+fake_news+'</button>'+
+                    '<button class="btn btn-success btn_true_news" value="'+news[response.i].link+'" id="'+news[response.i].link+'" type="button">'+true_news+'</button>'+
+                  '</div>'+
+                '</div>'
+                );
+              
+               $('.btn_fake_news').click(function(){
+                  var id = this.value;
+                  if (!clicked_fake_news){
+                    clicked_fake_news = true;
+                    doRequestInsertFakeNewsInto(new XMLHttpRequest(), news[response.i].link, user).then(function (response){
+                      var container = document.getElementById(id);
+                      var content = container.innerHTML;
+                      container.innerHTML= "aaa"; 
+                      clicked_fake_news = false;
+                    });
+                 }
+                
+                });
+                $('.btn_true_news').click(function(){
+                var id = this.value;
+                  if (!clicked_fake_news){
+                    clicked_fake_news = true;
+                    doRequestInsertTrueNewsInto(new XMLHttpRequest(), news[response.i].link, user).then(function (response){
+                      window.location = window.location.href;
+                      clicked_fake_news = false;
+                    });
+                 }
+              });
+            
+            });
+
+
+
+        } 
+      }
+
+      carrega_noticias();
+
+      function carrega_perfil(){
+          //criar xmlhttrequest
+          var xhr2 = new XMLHttpRequest();
+
+          //monta requisicao
+          xhr2.open("GET","http://localhost:8080/api_get_profile/"+user);
+          xhr2.onload = function(){
+            if (xhr2.status === 200){
+
+              var data = $.parseJSON(xhr2.responseText);
+
+               $('#profile').append(
+                    '<div class="col-sm-12 col-md-12">'+
+                        '<h4>'+
+                            '<h3 id="username" class="username">'+data.username+
+                        '</h3></h4>'+
+                          '<p>'+
+                        "NOME: "+data.name+
+                        '</p>'+
+                        '<p>'+
+                        "CNPJ: "+data.cnpj+
+                        '</p>'+
+                    '</div>'
+              );
+            } 
+        }
+
+         xhr2.send();
+
+      }
+
+
+
+      carrega_perfil();
+
+      });
+
+    </script>
+
+  </body>
+
+</html>

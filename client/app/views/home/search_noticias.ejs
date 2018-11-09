@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Instagram Clone</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!--Bootsrap 4 CDN-->
+    
+      <!--Fontawesome CDN-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    
+    <style>
+
+    body {
+      padding-top: 54px;
+    }
+
+    @media (min-width: 992px) {
+      body {
+        padding-top: 56px;
+      }
+    }
+#footer {
+   position:absolute;
+   bottom:0;
+   width:100%;
+   height:60px;   /* Height of the footer */
+   background:#6cf;
+}
+
+    </style>
+
+  </head>
+
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">ANTI Fake News</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="http://localhost/search_noticias"><span class="fa fa-search"></span> Pesquisar
+              </a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="http://localhost/logout"><span class="fa fa-sign-out-alt"></span> Sair</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Page Content -->
+    <div class="container">
+
+      <div class="row">
+
+        <!-- Blog Entries Column -->
+        <div class="col-md-8">
+
+        <h1 class="my-4">Pesquisar
+          <small>Notícias</small>
+        </h1>
+
+        <!-- Search Widget -->
+          <div class="card my-12">
+            <h5 class="card-header">Pesquisar</h5>
+            <div class="card-body">
+              <div class="input-group">
+                <input type="text" class="form-control" id="usuario_pesquisar" placeholder="Pesquisar Noticias">
+                <span class="input-group-btn">
+                  <button class="btn btn-secondary" id="btPesquisar" name="btPesquisar" type="button">Go!</button>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          
+
+        </div>
+
+        <!-- Sidebar Widgets Column -->
+        <div class="col-md-4">
+
+          <!-- Categories Widget -->
+          <div class="card my-4">
+            <h5 class="card-header">Meu Jornal</h5>
+            <div class="card-body ">
+              <div class="row" id="profile">
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+
+    <!-- Footer -->
+    <div id="footer" class="py-5 bg-dark">
+      <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; Anny Walker 2018</p>
+      </div>
+      <!-- /.container -->
+    </div>
+
+    <script type="text/javascript">
+      var username = "<%= user.username %>";
+
+    $(document).ready(function(){
+
+      $("#btPesquisar").on("click", function(){ 
+        window.location = "http://localhost/search_noticias_/?q="+$('#usuario_pesquisar').val()+"&user="+username;
+      });
+
+      function carrega_perfil(){
+          //criar xmlhttrequest
+          var xhr2 = new XMLHttpRequest();;
+
+          //monta requisicao
+          xhr2.open("GET","http://localhost:8080/api_get_profile/"+username);
+          xhr2.onload = function(){
+            if (xhr2.status === 200){
+
+              var data = $.parseJSON(xhr2.responseText);
+
+              $('#profile').append(
+                    '<div class="col-sm-12 col-md-12">'+
+                        '<h4>'+
+                            '<h3 id="username" class="username">'+data.username+
+                        '</h3></h4>'+
+                          '<p>'+
+                        "NOME: "+data.name+
+                        '</p>'+
+                        '<p>'+
+                        "CNPJ: "+data.cnpj+
+                        '</p>'+
+                    '</div>'
+              );
+            } 
+        }
+
+         xhr2.send();
+
+      }
+
+      carrega_perfil();
+
+    });
+
+    </script>
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  </body>
+
+</html>

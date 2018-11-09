@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>Instagram Clone</title>
+  
+  
+  <link rel='stylesheet' href='http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css'>
+
+      <link rel="stylesheet" href="css/style.css">
+
+  
+</head>
+
+<body>
+
+    <div class="wrapper">
+    <form class="form-signin" method="post" action="http://localhost/login">       
+        <% if(message.length > 0) { %>
+              <div class="alert alert-danger"><%= message %></div> 
+        <% } %>  
+        <h1 class="form-signin-heading text-center">Anti Fake News</h1>
+        <h2 class="form-signin-heading text-center">Login</h2>
+        <input type="text" class="form-control" name="username" placeholder="Email" required="" autofocus="" />
+        <input type="password" class="form-control" name="password" placeholder="Senha" required=""/>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>  
+    </form>
+  </div>
+  
+  
+
+</body>
+
+</html>

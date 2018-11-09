@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>Anti Fake News</title>
+  
+  
+  <link rel='stylesheet' href='http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css'>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://www.geradorcnpj.com/assets/js/jquery-1.2.6.pack.js"></script>
+    <script src="https://www.geradorcnpj.com/assets/js/jquery.maskedinput-1.1.4.pack.js"></script>
+      <link rel="stylesheet" href="css/style.css">
+
+  
+</head>
+
+<body>
+
+    <div class="wrapper">
+    <form class="form-signin" method="post" id="form1" action="http://localhost/registre_se">   
+        <% if(message.length > 0) { %>
+            <div class="alert alert-danger"><%= message %></div> 
+        <% } %>    
+        <h1 class="form-signin-heading text-center">Anti Fake News</h1>
+        <h2 class="form-signin-heading text-center">Registrar Jornal</h2>
+        <input type="text" class="form-control" name="username" placeholder="Email" required="true" autofocus="" />
+        <input type="text" class="form-control" name="name" placeholder="Nome" required="true" />
+        <input type="text" class="form-control" name="cnpj" id="cnpj" placeholder="CNPJ" maxlength="18">
+        <input type="password" class="form-control" name="password" placeholder="Password" required="true"/>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Registrar</button> 
+    </form>
+  </div>
+  
+  <script type="text/javascript">
+  $(document).ready(function(){ 
+      $("#cnpj").mask("99.999.999/9999-99");
+    });
+  </script>
+
+</body>
+
+</html>
